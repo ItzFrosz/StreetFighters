@@ -1,69 +1,50 @@
 
 import pygame
+import os 
 
+# инициализация Pygame
 pygame.init()
 
-# Установка размера экрана
+# установка частоты кадров
+FPS = 60
+fps_clock = pygame.time.Clock()
 
+# установка размера окна
+WINDOW_WIDTH = 1600
+WINDOW_HEIGHT = 700
+window_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
+# загрузка спрайта игрока
+player_image = pygame.image.load("/Users/programmer/Documents/CODER/StreetFighter/images/minotaur_02_idle_000.png")
+player_rect = player_image.get_rect()
+player_rect.centerx = WINDOW_WIDTH // 2
+player_rect.bottom = WINDOW_HEIGHT - 10
 
-screen_width = 1200
-screen_height = 1400
-screen = pygame.display.set_mode((screen_width, screen_height))
-# Задаем цвет заливки
-bg_color = (255, 0, 0)  # красный
+os.chdir('/Users/programmer/Documents/CODER/StreetFighter/')
+# скорость игрока
+player_speed = 5
 
-# Заполняем экран цветом заливки
-screen.fill(bg_color)
-# Загрузка картинки
-image_path = "images/Minotaur_02_Idle_000.png"
-image = pygame.image.load(image_path).convert()
-
-# Создание спрайта из картинки
-sprite = pygame.sprite.Sprite()
-sprite.image = image
-sprite.rect = sprite.image.get_rect()
-sprite.rect.center = (screen_width // 2, screen_height // 2)
-
-# Создание группы спрайтов
-all_sprites = pygame.sprite.Group()
-all_sprites.add(sprite)
-
-# Флаг для отслеживания зажатой клавиши S
-moving_down = False
-#vm
-moving_up = False
-
-# Основной цикл программы
+# основной игровой цикл
 while True:
+    # обработка событий
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-            quit()
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_a:
-                moving_up = True
-            elif event.key == pygame.K_d:
-                moving_down = True  # запуск движения вниз
-        elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_a:
-                moving_down = False  # остановка движения вниз
-            if event.key == pygame.K_d:
-                moving_up = False  # остановка движения вниз
-    
-    
-    # Перемещение спрайта при зажатой клавише S
-    if moving_down:
-        sprite.rect.x += 1  # движение вниз
+            sys.exit()
 
-    if moving_up:
-        sprite.rect.x -= 1  # движение вниз
-    
-    # Очистка экрана
-    screen.fill((255, 255, 255))
-    
-    # Рисование спрайтов
-    all_sprites.draw(screen)
-    
-    # Обновление экрана
+    # обработка нажатий клавиш
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_a]:
+        player_rect.move_ip(-player_speed, 0)
+    if keys[pygame.K_d]:
+        player_rect.move_ip(player_speed, 0)
+
+    # отрисовка игровых объектов
+    window_surface.fill((255, 255, 255))
+    window_surface.blit(player_image, player_rect)
+
+    # обновление экрана
     pygame.display.update()
+
+    # задержка до следующего кадра
+    fps_clock.tick(FPS)
